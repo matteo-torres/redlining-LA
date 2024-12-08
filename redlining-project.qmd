@@ -2,6 +2,217 @@
 title: "Exploring Historical Redlining in Los Angeles County"
 author: "Matteo Torres"
 date: "Decemeber 7, 2024"
-format: html
+execute: 
+  output: false
+format: 
+  html:
+    theme: darkly
+    toc: true
+editor_options: 
+  chunk_output_type: console
 ---
 
+### Load Packages
+```{r}
+#| code-fold: true
+
+library(sf)
+library(here)
+library(tmap)
+library(stars)
+library(tidyverse)
+```
+
+### Import Data
+```{r}
+ejscreen <- read_sf(here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
+
+  los_angeles <- ejscreen %>%
+    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & ID != '060379902000' &
+                  ID !='060379901000' &
+                  ID != '060379903000' &
+                  ID != '599100')
+
+redlining <- st_read(here("data", "mapping-inequality", "mapping-inequality-los-angeles.json"))
+
+  sum(!st_is_valid(redlining))
+
+  redlining <- st_make_valid(redlining)
+
+biodiversity <- st_read(here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
+```
+
+```{r, warning = TRUE, echo = FALSE}
+# Check if the coordinate reference systems (CRS) of all datasets match
+if(st_crs(los_angeles) == st_crs(redlining) & 
+   st_crs(los_angeles) == st_crs(biodiversity) & 
+   st_crs(redlining) == st_crs(biodiversity)) {
+  message("All coordinate reference systems match!")
+} else {
+  warning("The coordinate reference systems do not match!")
+}
+```
+
+```{r}
+# Reproject the Los Angeles dataset to match the CRS
+los_angeles <- st_transform(los_angeles, crs = st_crs(redlining))
+```
+
+```{r, message = TRUE, echo = FALSE}
+# Verify that all datasets share the same CRS
+if(st_crs(los_angeles) == st_crs(redlining) & 
+   st_crs(los_angeles) == st_crs(biodiversity) & 
+   st_crs(redlining) == st_crs(biodiversity)) {
+  message("All coordinate reference systems match!")
+} else {
+  warning("The coordinate reference systems do not match!")
+}
+```
+
+## Part 1: Legacy of Redlining in Current Environmental (In)justice
+
+### Visualize Data
+```{r, output = TRUE}
+#| code-fold: true
+
+# Set a bounding box to define the map extent
+bbox_redlining <- st_bbox(redlining)
+
+# Map the historical redlining neighborhoods
+tm_shape(los_angeles, bbox = bbox_redlining) +
+  tm_polygons(col = "white") +
+tm_shape(redlining) +
+  tm_polygons("grade",
+              palette = c("green", "blue", "yellow", "red"),
+              title = "HOLC Grade") +
+  tmap_options(check.and.fix = TRUE) +
+tm_scale_bar() +
+tm_compass(position = c("right", "top")) +
+tm_layout(main.title = "Historical Redlining in Los Angeles County (2023)",
+          bg.color = "lightblue",
+          legend.position = c("left", "bottom"),
+          legend.title.size = 0.8,
+          legend.text.size = 0.6)
+```
+
+```{r}
+#| code-fold: true
+
+# Calculate the percent of current census block groups within each HOLC grade
+st_join(los_angeles, redlining, join = st_intersects, left = FALSE) %>%
+  group_by(grade) %>%
+  summarize(count = n()) %>%
+  mutate(perc_census = count/sum(count)*100) %>%
+  select(-count) %>%
+  st_drop_geometry()
+```
+
+| HOLC Grade | Percent Census (%) |
+|------------|--------------------|
+|     A      |      7.03          |
+|     B      |     19.40          |
+|     C      |     47.90          |
+|     D      |     21.10          |
+|     NA     |      4.63          |
+: Percent of Current Census Block Groups within Each HOLC Grade
+
+```{r}
+# Summarize means for LOWINCPCT, P_PM25, and P_LIFEEXPPCT within each HOLC grade
+HOLC_means <- st_join(los_angeles, redlining, join = st_intersects, left = FALSE) %>%
+  select(grade, LOWINCPCT, P_PM25, P_LIFEEXPPCT) %>%
+  filter(grade != "NA") %>%
+  group_by(grade) %>%
+  summarize(mean_lowinc = mean(LOWINCPCT), 
+            mean_pm = mean(P_PM25), 
+            mean_life = mean(P_LIFEEXPPCT, na.rm = TRUE)) %>%
+  st_drop_geometry() %>%
+  column_to_rownames(var = "grade")
+```
+
+```{r, output = TRUE}
+#| code-fold: true
+
+# Figure for % low income figure
+ggplot(data = HOLC_means, aes(x = rownames(HOLC_means), 
+                              y = mean_lowinc)) +
+  geom_bar(stat = "identity", 
+           fill = c("green", "blue", "yellow", "red")) +
+  labs(x = "HOLC Grade",
+       y = "Mean (%)",
+       title = "Percent Average of Low Income Individuals within Each HOLC Grade") +
+  theme_bw()
+```
+
+```{r, output = TRUE}
+#| code-fold: true
+
+# Figure for percentile for particulate matter 2.5
+ggplot(data = HOLC_means, aes(x = rownames(HOLC_means), 
+                              y = mean_pm)) +
+  geom_bar(stat = "identity", 
+           fill = c("green", "blue", "yellow", "red")) +
+  labs(x = "HOLC Grade",
+       y = "Mean Percentile",
+       title = "Average Percentile for Particulate Matter 2.5 within Each HOLC Grade") +
+  theme_bw()
+```
+
+```{r, output = TRUE}
+#| code-fold: true
+
+# Figure for percentile for low life expectancy
+ggplot(data = HOLC_means, aes(x = rownames(HOLC_means), 
+                              y = mean_life)) +
+  geom_bar(stat = "identity", 
+           fill = c("green", "blue", "yellow", "red")) +
+  labs(x = "HOLC Grade",
+       y = "Mean Percentile",
+       title = "Average Percentile for Low Life Expectancy within each HOLC Grade") +
+  theme_bw()
+```
+
+### Interpretation
+
+Historic redlining in Los Angeles County continues to be an issue that negatively impacts individuals who reside in neighborhoods that are declining (yellow) and hazardous (red) based on HOLC grades. The census data reveals that more than half of Angelenos live in areas rated C and D, while only seven percent of individuals reside in the best neighborhoods, A. According to the bar graphs, a clear trend emerges as the HOLC grade decreases, reflecting a decline in quality of life. On average, as the HOLC grade decreases, there tends to be a higher proportion of lower-income households, increased exposure to PM 2.5, and a lower life expectancy.
+
+
+## Part 2: Legacy of Redlining in Biodiversity Observations
+
+### Visualize Data
+```{r}
+# Summarize the percent of bird observations within each HOLC grade
+HOLC_bird <- st_join(biodiversity, redlining, join = st_intersects, left = FALSE) %>%
+  filter(year == 2022, 
+         grade != "NA") %>%
+  group_by(grade) %>% 
+  summarize(bird_count = n()) %>%
+  mutate(perc_obs = bird_count/sum(bird_count)*100) %>%
+  select(-bird_count) %>% 
+  st_drop_geometry() %>%
+  column_to_rownames(var = "grade")
+```
+
+```{r, output = TRUE}
+#| code-fold: true
+
+# Figure for percent of bird observations within each HOLC grade
+ggplot(data = HOLC_bird, aes(x = rownames(HOLC_bird), y = perc_obs)) +
+  geom_bar(stat = "identity",
+           fill = c("green", "blue", "yellow", "red")) +
+  labs(x = "HOLC Grade",
+       y = "Bird Observations (%)",
+       title = "Percent of Bird Observations within Each HOLC Grade (2022)") +
+  theme_bw()
+```
+
+### Interpretation
+
+After reviewing the article "Bird Biodiversity Reports Reflect Cities' Redlined Past," researcher Diego Ellis Soto highlights a significant disparity in sampling density. Areas graded as A previously had more than twice the sampling density compared to those graded as D. However, when analyzing bird observations from 2022, it became apparent that lower-graded areas, such as C and D, had a higher percentage of bird populations than their A and B counterparts. This discrepancy emphasizes the challenges of inadequate sampling in historically marginalized neighborhoods.
+
+### Data Citations
+
+| Data | Citation | Link |
+|------|----------|------|
+| EJScreen | U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentation. | www.epa.gov/EJScreen |
+| HOLC Redlining | Robert K. Nelson, LaDale Winling, Richard Marciano, Nathan Connolly, et al., “Mapping Inequality,” American Panorama, ed. Robert K. Nelson and Edward L. Ayers, accessed October 17, 2023. | https://dsl.richmond.edu/panorama/redlining/data |
+| Biodiversity Observations | Ellis-Soto, D., Chapman, M., & Locke, D. H. (2023). Historical redlining is associated with increasing geographical disparities in bird biodiversity sampling in the United States. Nature Human Behaviour, 1-9. | https://www.gbif.org |
