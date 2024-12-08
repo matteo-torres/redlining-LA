@@ -1,7 +1,7 @@
 ---
 title: "Exploring Historical Redlining in Los Angeles County"
 author: "Matteo Torres"
-date: "Decemeber 7, 2024"
+date: "December 7, 2024"
 execute: 
   output: false
 format: 
