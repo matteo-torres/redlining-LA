@@ -33,11 +33,8 @@ ejscreen <- read_sf(here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_
                   ID != '060379903000' &
                   ID != '599100')
 
-redlining <- st_read(here("data", "mapping-inequality", "mapping-inequality-los-angeles.json"))
-
-  sum(!st_is_valid(redlining))
-
-  redlining <- st_make_valid(redlining)
+redlining <- st_read(here("data", "mapping-inequality", "mapping-inequality-los-angeles.json")) %>%
+  st_make_valid()
 
 biodiversity <- st_read(here("data", "gbif-birds-LA", "gbif-birds-LA.shp"))
 ```
