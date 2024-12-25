@@ -30,9 +30,9 @@ All the data has been downloaded and stored in the data folder. The files can be
 
 ## References
 
-Digital Scholarship Lab. (n.d.). Mapping inequality: Redlining in New Deal America. Retrieved from https://dsl.richmond.edu/panorama/redlining/data
+Global Biodiversity Information Facility. (n.d.). GBIF backbone taxonomy. Retrieved from https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e
 
-GBIF. (n.d.). https://www.gbif.org/ 
+Digital Scholarship Lab. (n.d.). Mapping inequality: Redlining in New Deal America. Retrieved from https://dsl.richmond.edu/panorama/redlining/data
 
 U.S. Environmental Protection Agency. (n.d.). EJScreen data download. Retrieved from https://www.epa.gov/ejscreen/download-ejscreen-data
 
