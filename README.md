@@ -30,10 +30,11 @@ All data has been downloaded and organized within the data folder of this reposi
 
 ```bash
 los_angeles <- ejscreen %>%
-    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & ID != '060379902000' &
-                  ID !='060379901000' &
-                  ID != '060379903000' &
-                  ID != '599100')
+    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & 
+                    ID != '060379902000' &
+                    ID !='060379901000' &
+                    ID != '060379903000' &
+                    ID != '599100')
 ```
 
 ## References
