@@ -28,10 +28,11 @@ library(tidyverse)
 ejscreen <- read_sf(here("data", "ejscreen", "EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb"))
 
   los_angeles <- ejscreen %>%
-    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & ID != '060379902000' &
-                  ID !='060379901000' &
-                  ID != '060379903000' &
-                  ID != '599100')
+    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & 
+                    ID != '060379902000' &
+                    ID !='060379901000' &
+                    ID != '060379903000' &
+                    ID != '599100')
 
 redlining <- st_read(here("data", "mapping-inequality", "mapping-inequality-los-angeles.json")) %>%
   st_make_valid()
@@ -210,6 +211,6 @@ After reviewing the article "Bird Biodiversity Reports Reflect Cities' Redlined 
 
 | Data | Citation | Link |
 |------|----------|------|
-| EJScreen | U.S. Environmental Protection Agency (EPA), 2023. EJScreen Technical Documentation. | www.epa.gov/EJScreen |
-| HOLC Redlining | Robert K. Nelson, LaDale Winling, Richard Marciano, Nathan Connolly, et al., “Mapping Inequality,” American Panorama, ed. Robert K. Nelson and Edward L. Ayers, accessed October 17, 2023. | https://dsl.richmond.edu/panorama/redlining/data |
-| Biodiversity Observations | Ellis-Soto, D., Chapman, M., & Locke, D. H. (2023). Historical redlining is associated with increasing geographical disparities in bird biodiversity sampling in the United States. Nature Human Behaviour, 1-9. | https://www.gbif.org |
+| EJScreen | U.S. Environmental Protection Agency. (n.d.). EJScreen data download. | https://www.epa.gov/ejscreen/download-ejscreen-data |
+| HOLC Redlining | Digital Scholarship Lab. (n.d.). Mapping inequality: Redlining in New Deal America. | https://dsl.richmond.edu/panorama/redlining/data |
+| Biodiversity Observations | Global Biodiversity Information Facility. (n.d.). GBIF backbone taxonomy. | https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e |
