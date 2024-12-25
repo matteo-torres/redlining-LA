@@ -38,6 +38,6 @@ U.S. Environmental Protection Agency. (n.d.). EJScreen data download. Retrieved 
 
 ## Acknowledgements
 
-This repository was created for a final project related to the course EDS 220: Working with Environmental Datasets.
+This repository was created for a final project related to the course EDS 223: Geospatial Analysis & Remote Sensing.
 
 This course is an academic requirement for the Master of Environmental Data Science (MEDS) program at the Bren School of Environmental Science & Management, University of California, Santa Barbara.
