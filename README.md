@@ -30,11 +30,11 @@ All the data has been downloaded and stored in the data folder. The files can be
 
 ## References
 
-Environmental Protection Agency. (n.d.-a). EPA. https://www.epa.gov/ejscreen/download-ejscreen-data 
-
 GBIF. (n.d.). https://www.gbif.org/ 
 
 Mapping inequality. Digital Scholarship Lab. (n.d.-a). https://dsl.richmond.edu/panorama/redlining/data 
+
+U.S. Environmental Protection Agency. (n.d.). EJScreen data download. Retrieved from https://www.epa.gov/ejscreen/download-ejscreen-data
 
 ## Acknowledgements
 
