@@ -26,7 +26,15 @@ redlining-LA
 
 ## Data
 
-All the data has been downloaded and stored in the data folder. The files can be accessed within separate subfolders, organized by name.
+All data has been downloaded and organized within the data folder of this repository. The files are stored in separate subfolders, named for easy access. For the EJScreen dataset, Los Angeles County was filtered to retain only relevant data, with excess polygons removed to ensure accuracy and focus.
+
+```bash
+los_angeles <- ejscreen %>%
+    dplyr::filter(CNTY_NAME %in% c("Los Angeles County") & ID != '060379902000' &
+                  ID !='060379901000' &
+                  ID != '060379903000' &
+                  ID != '599100')
+```
 
 ## References
 
