@@ -11,23 +11,16 @@ This study aims to explore the historical practice of redlining in Los Angeles C
 
 ```bash
 redlining-LA
-│   README.md
-│   redlining-project.qmd
-|   Rmd/Proj files
-│   .gitignore
-|
+├── README.md
+├── .gitignore
+├── redlining-project.qmd
+├── Rmd/Proj files
 └── data
-    │  
-    └── ejscreen
-    |   |
-    |   └── EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb
-    |
-    └── gbif-birds-LA
-    |   |
-    |   └── gbif-birds-LA.shp
-    |
+    ├── ejscreen
+    │   └── EJSCREEN_2023_BG_StatePct_with_AS_CNMI_GU_VI.gdb
+    ├── gbif-birds-LA
+    │   └── gbif-birds-LA.shp
     └── mapping-inequality
-        |
         └── mapping-inequality-los-angeles.json
 ```
 
